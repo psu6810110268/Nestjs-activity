@@ -7,8 +7,8 @@ import { BookCategory } from './entities/book-category.entity';
 
 @Injectable()
 export class BookCategoryService {
-  create(createBookCategoryDto: CreateBookCategoryDto) {
-    return 'This action adds a new bookCategory';
+  create(createDto: CreateBookCategoryDto) {
+    return this.repo.save(createDto);
   }
 
   constructor(
@@ -18,18 +18,18 @@ export class BookCategoryService {
 
   findAll() {
    return this.repo.find(); // <--- สั่งให้ค้นหาข้อมูลทั้งหมดในตารางส่งกลับไป
- }
-
-  findOne(id: number) {
-    return `This action returns a #${id} bookCategory`;
   }
 
-  update(id: number, updateBookCategoryDto: UpdateBookCategoryDto) {
-    return `This action updates a #${id} bookCategory`;
+  findOne(id: string) {
+    return this.repo.findOneBy({ id });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} bookCategory`;
+  update(id: string, updateDto: UpdateBookCategoryDto) {
+    return this.repo.update(id, updateDto);
+  }
+
+  remove(id: string) {
+    return this.repo.delete(id);
   }
 
   async onModuleInit() {
