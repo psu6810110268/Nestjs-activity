@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BookCategoryModule } from './book-category/book-category.module';
 
 @Module({
   imports: [
@@ -7,12 +8,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       type: 'postgres',
       host: 'localhost',
       port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'bookstore-dev',
-      entities: [], // เราจะเพิ่ม Entities ที่นี่ในภายหลัง
-      synchronize: true, // สร้าง Table อัตโนมัติ (ใช้สำหรับ Dev เท่านั้น)
+      // 1. แก้ User/Pass ให้ตรงกับ Docker (ที่คุณส่งมาตอนแรก)
+      username: 'postgres',       
+      password: 'postgres', 
+      
+      // 2. แก้ชื่อ DB ให้เป็น _ (ขีดล่าง) ตาม Docker
+      database: 'bookstore-dev', 
+
+      // 3. แก้ให้โหลด Entity อัตโนมัติ (แก้ Error: EntityMetadataNotFoundError)
+      entities: [], 
+      autoLoadEntities: true,  // <-- สำคัญมาก! ต้องเพิ่มบรรทัดนี้
+      
+      synchronize: true, 
     }),
+    BookCategoryModule,
   ],
 })
 export class AppModule {}
