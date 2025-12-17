@@ -1,19 +1,37 @@
-// src/book-category/book-category.service.ts
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, OnModuleInit } from '@nestjs/common'; // 1. เพิ่ม OnModuleInit
+import { InjectRepository } from '@nestjs/typeorm'; // 2. เพิ่มตัว Inject
+import { Repository } from 'typeorm'; // 3. เพิ่ม Repository
 import { CreateBookCategoryDto } from './dto/create-book-category.dto';
 import { UpdateBookCategoryDto } from './dto/update-book-category.dto';
 import { BookCategory } from './entities/book-category.entity';
 
 @Injectable()
-export class BookCategoryService implements OnModuleInit {
+export class BookCategoryService {
+  create(createDto: CreateBookCategoryDto) {
+    return this.repo.save(createDto);
+  }
+
   constructor(
     @InjectRepository(BookCategory)
-    private readonly repo: Repository<BookCategory>,
+    private repo: Repository<BookCategory>,
   ) {}
 
-  // ฟังก์ชัน Seeding ข้อมูลที่คุณต้องการ
+  findAll() {
+   return this.repo.find(); // <--- สั่งให้ค้นหาข้อมูลทั้งหมดในตารางส่งกลับไป
+  }
+
+  findOne(id: string) {
+    return this.repo.findOneBy({ id });
+  }
+
+  update(id: string, updateDto: UpdateBookCategoryDto) {
+    return this.repo.update(id, updateDto);
+  }
+
+  remove(id: string) {
+    return this.repo.delete(id);
+  }
+
   async onModuleInit() {
     const count = await this.repo.count();
     if (count === 0) {
@@ -24,26 +42,5 @@ export class BookCategoryService implements OnModuleInit {
            { name: 'History', description: 'Past events' }
         ]);
     }
-  }
-
-  // CRUD Methods ที่ Controller เรียกใช้
-  create(createBookCategoryDto: CreateBookCategoryDto) {
-    return this.repo.save(createBookCategoryDto);
-  }
-
-  findAll() {
-    return this.repo.find();
-  }
-
-  findOne(id: number) {
-    return this.repo.findOneBy({ id });
-  }
-
-  update(id: number, updateBookCategoryDto: UpdateBookCategoryDto) {
-    return this.repo.update(id, updateBookCategoryDto);
-  }
-
-  remove(id: number) {
-    return this.repo.delete(id);
-  }
+}
 }
