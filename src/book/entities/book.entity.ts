@@ -1,5 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { BookCategory } from '../../book-category/entities/book-category.entity';
+import { User } from '../../users/entities/user.entity';
+import { ManyToMany, JoinTable } from 'typeorm';
 
 @Entity()
 export class Book {
@@ -14,6 +16,10 @@ export class Book {
 
   @Column('decimal', { precision: 10, scale: 2 })
   price: number;
+
+  @ManyToMany(() => User, (user) => user.likedBooks)
+  @JoinTable()
+  likedBy: User[];
 
   @Column({ default: 0 })
   likeCount: number;

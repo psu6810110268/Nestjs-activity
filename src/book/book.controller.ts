@@ -6,6 +6,7 @@ import { AuthGuard } from '@nestjs/passport'; // 1. Guard ของ Passport (�
 import { RolesGuard } from '../auth/roles.guard'; // 2. Guard ที่เราสร้างเอง (เช็ค Role)
 import { Roles } from '../auth/roles.decorator'; // 3. Decorator ที่เราสร้างเอง
 import { UserRole } from '../users/entities/user.entity'; // 4. Enum Role
+import { CurrentUser } from '../auth/current-user.decorator';
 
 @Controller('book')
 export class BookController {
@@ -36,6 +37,12 @@ export class BookController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
     return this.bookService.update(id, updateBookDto);
+  }
+
+  @UseGuards(AuthGuard('jwt')) // ต้อง Login ก่อนถึงจะ Like ได้ (ทั้ง Admin/User)
+  @Patch(':id/like')
+  async toggleLike(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.bookService.toggleLike(id, user.userId);
   }
 
   // 🔒 Protected Route
